@@ -2,8 +2,10 @@ import SignUpPage from "../../../src/pages/SignUpPage.vue";
 import {render, screen}  from "@testing-library/vue";
 import "@testing-library/jest-dom";
 import userEvent from "@testing-library/user-event";
-import userServices from '../../../src/api/userServices.js';
 import user from "../../../src/models/user.js";
+import { setupServer } from "msw/node";
+import { rest } from "msw";
+import apiUrls from "../../../src/util/apiUrls.js";
 
 describe("Sign Up Page", () => {
     describe("Layout", () => {
@@ -65,6 +67,15 @@ describe("Sign Up Page", () => {
             expect(button).toBeEnabled();
         });
         it("sends username, email and password to backend after clicking the button", async () => {
+            let requestBody;
+            const server = setupServer(
+                rest.post(apiUrls.USER_CREATE, (req, res, context) => {
+                    requestBody = req.body;
+                    return res(context.status(200));
+                })
+            );
+            server.listen();
+
             render(SignUpPage);
             const usernameInput = screen.queryByLabelText("Username");
             const emailInput = screen.queryByLabelText("E-mail");
@@ -79,15 +90,11 @@ describe("Sign Up Page", () => {
 
             const userFields = new user("user1", "user1@gmail.com", "P4ssword");
 
-            const mockFn = jest.fn();
-            userServices.createNewUser = mockFn;
-
             await userEvent.click(button);
 
-            const firstCall = mockFn.mock.calls[0];
-            const body = firstCall[0];
+            await server.close();
 
-            expect(body).toEqual(userFields);
+            expect(requestBody).toEqual(userFields);
         });
     })
 });
