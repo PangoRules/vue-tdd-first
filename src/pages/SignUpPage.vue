@@ -1,16 +1,36 @@
 <template>
-    <form v-on:submit.prevent="submitForm">
-        <h1>Sign Up</h1>
-        <label for="username">Username</label>
-        <input id="username" type="text" placeholder="username" v-model="userModel.username">
-        <label for="email">E-mail</label>
-        <input id="email" type="email" placeholder="e-mail" v-model="userModel.email">
-        <label for="password">Password</label>
-        <input id="password" type="password" placeholder="password" v-model="userModel.password">
-        <label for="password-repeat">Password Repeat</label>
-        <input id="password-repeat" type="password" placeholder="password" v-model="repeatPassword">
-        <button :disabled="disableButton" type="submit">Sign Up</button>
-    </form>
+    <div class="col-lg-6 offset-lg-3 coo-md-8 offset-md-2">
+        <div class="alert alert-success mt-5" v-show="successfulSignup">Please check your e-mail to activate your account</div>
+        <form v-on:submit.prevent="submitForm" class="card">
+            <div class="card-header">
+                <h1 class="text-center">Sign Up</h1>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input id="username" type="text" class="form-control" placeholder="username" v-model="userModel.username">
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">E-mail</label>
+                    <input id="email" type="email" class="form-control" placeholder="e-mail" v-model="userModel.email">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input id="password" type="password" class="form-control" placeholder="password" v-model="userModel.password">
+                </div>
+                <div class="mb-3">
+                    <label for="password-repeat" class="form-label">Password Repeat</label>
+                    <input id="password-repeat" type="password" class="form-control" placeholder="password" v-model="repeatPassword">
+                </div>
+                <div class="text-center">
+                    <button :disabled="disableButton" type="submit" class="btn btn-primary">
+                        <span class="spinner-border spinner-border-sm" role="status" v-show="isLoading"></span>
+                        Sign Up
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
 </template>
 
 <script>
@@ -26,20 +46,34 @@ export default {
             userModel: new userModel(),
             /**@type {String} String for the repeat password field */
             repeatPassword: "",
+            /**@type {Boolean} Boolean value to detect if the page is waiting for a request */
+            isLoading: false,
+            /**@type {Boolean} Indicates if the signup was successful */
+            successfulSignup: false,
         }
     },
 
     methods:{
         async submitForm(){
+            if(this.loading){
+                return;
+            }
+            this.loading = true;
             const response = await userServices.createNewUser(this.userModel);
-            console.log("🚀 ~ file: SignUpPage.vue ~ line 33 ~ submitForm ~ response", response);
+            if(response){
+                this.userModel = new userModel();
+                this.successfulSignup = true;
+                this.repeatPassword = "";
+            }
+            this.loading = false;
         }
     },
 
     computed:{
         disableButton(){
             return (this.userModel.password !== this.repeatPassword || 
-                this.userModel.password.trim().length === 0);
+                this.userModel.password.trim().length === 0 ||
+                this.isLoading);
         }
     }
 }
