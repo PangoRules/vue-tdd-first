@@ -67,6 +67,7 @@ describe("Sign Up Page", () => {
         beforeEach(async () => {
             requestCounter = 0;
             await setupInputs();
+            server.resetHandlers();
         });
 
         afterAll(() => server.close());
@@ -98,15 +99,6 @@ describe("Sign Up Page", () => {
             await userEvent.type(passwordRepeatInput, "P4ssword!");
             expect(submitButton).not.toBeEnabled();
         });
-        //BUG: If V-if is used, an error happens on this test since it cannot find the given component, if v-show it does because it always exists
-        it("sends username, email and password to backend after clicking the button", async () => {
-            const userFields = new user("user1", "user1@gmail.com", "P4ssword");
-            await userEvent.click(submitButton);
-
-            // await screen.findByText("Please check your e-mail to activate your account");
-
-            expect(requestBody).toEqual(userFields);
-        });
         //BUG: Check video tutorial if question gets responded, counter increments on 2, skipping the test while wait
         it.skip("disable button if there is a pending call", async () => {
             await userEvent.click(submitButton);
@@ -127,9 +119,14 @@ describe("Sign Up Page", () => {
         });
         //BUG: Spinner displays while it's in progress but this tests fails to prove it, need more research regarding to it, doesn't finds it even if it's v-show
         it.skip("doesn't display spinner if no api request active", async () => {
-            const spinner = screen.queryByRole("status");
+            // const spinner = screen.queryByRole((content, element) => {
+            //     return element.tagName.toLowerCase() === 'span' && element.ariaRoleDescription === 'spinner'
+            // });
+            const spinner = screen.queryByRole('status');
 
-            expect(spinner).not.toBeInTheDocument();
+            console.log("🚀 ~ file: SignUpPage.spec.js ~ line 125 ~ spinner ~ spinner", spinner)
+
+            // expect(spinner).not.toBeInTheDocument();
         });
         it("displays account activation information after successful sign up request", async () => {
             await userEvent.click(submitButton);
@@ -139,22 +136,70 @@ describe("Sign Up Page", () => {
             expect(textSuccess).toBeInTheDocument();
         });
         it("does not displays account activation information before sign up request", async () => {
-            const textSuccess = screen.queryByText("Please check your e-mail to activate your account");
+            const textSuccess = screen.queryByText((content, element) => {
+                return element.tagName.toLowerCase() === 'div' && content.startsWith('Please check')
+            });
 
-            expect(textSuccess.style.display).toBe("none");
+            expect(textSuccess).not.toBeInTheDocument();
         });
         it("does not displays account activation information after un-successful sign up request", async () => {
             server.use(
                 rest.post(apiUrls.USER_CREATE, (req, res, context) => {
-                    return res.once(context.status(400));
+                    return res(context.status(400));
                 })
             )
 
             await userEvent.click(submitButton);
 
-            const textSuccess = screen.queryByText("Please check your e-mail to activate your account");
+            const textSuccess = screen.queryByText((content, element) => {
+                return element.tagName.toLowerCase() === 'div' && content.startsWith('Please check')
+            });
 
-            expect(textSuccess.style.display).toBe("none");
+            expect(textSuccess).not.toBeInTheDocument();
+        });
+        it("sends username, email and password to backend after clicking the button", async () => {
+            const userFields = new user("user1", "user1@gmail.com", "P4ssword");
+            await userEvent.click(submitButton);
+
+            await screen.findByText((content, element) => {
+                return element.tagName.toLowerCase() === 'div' && content.startsWith('Please check')
+            });
+
+            expect(requestBody).toEqual(userFields);
+        });
+        it("displays validation error messages", async () =>{
+            server.use(
+                rest.post(apiUrls.USER_CREATE, (req, res, context) => {
+                    return res.once(
+                        context.status(400), 
+                        context.json({
+                            path: "/api/1.0/users",
+                            message: "Fallos en la validación.",
+                            validationErrors: {
+                                username: "El nombre de usuario no puede estar vacío.",
+                                email: "El E-mail no puede ser nulo.",
+                                password: "La contraseña debe tener mínimo 6 caracteres."
+                            }
+                        })
+                    );
+                })
+            )
+
+            await userEvent.click(submitButton);
+
+            const errorUsername = await screen.findByText((content, element) => {
+                return element.tagName.toLowerCase() === 'p' && content.startsWith('username')
+            });
+            const errorEmail = await screen.findByText((content, element) => {
+                return element.tagName.toLowerCase() === 'p' && content.startsWith('email')
+            });
+            const errorPassword = await screen.findByText((content, element) => {
+                return element.tagName.toLowerCase() === 'p' && content.startsWith('password')
+            });
+
+            expect(errorUsername).toBeInTheDocument();
+            expect(errorEmail).toBeInTheDocument();
+            expect(errorPassword).toBeInTheDocument();
         });
     })
 });

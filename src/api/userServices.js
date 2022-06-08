@@ -15,10 +15,9 @@ export default{
     async createNewUser(userModel){
         try{
             let response = await apis.serverBaseApi().post(apiUrls.USER_CREATE, userModel);
-            if(response.status == 200)
-                return response.data;
+            return response;
         }catch(error){
-            return null;
+            return error.response;
         }
     }
 }

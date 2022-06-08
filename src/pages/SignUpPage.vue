@@ -1,6 +1,12 @@
 <template>
     <div class="col-lg-6 offset-lg-3 coo-md-8 offset-md-2">
-        <div class="alert alert-success mt-5" v-show="successfulSignup">Please check your e-mail to activate your account</div>
+        <div class="alert alert-success mt-5" v-if="successfulSignup">Please check your e-mail to activate your account</div>
+        <div class="alert alert-danger" role="errors" v-if="Object.keys(errors).length !== 0">
+            <h4>Errors</h4>
+            <p class="m-0 p-0" v-for="(value, key, index) in errors" :key="index">
+                {{key}}: {{value}}
+            </p>
+        </div>
         <form v-on:submit.prevent="submitForm" class="card">
             <div class="card-header">
                 <h1 class="text-center">Sign Up</h1>
@@ -24,7 +30,7 @@
                 </div>
                 <div class="text-center">
                     <button :disabled="disableButton" type="submit" class="btn btn-primary">
-                        <span class="spinner-border spinner-border-sm" role="status" v-show="isLoading"></span>
+                        <span class="spinner-border spinner-border-sm" role="status" aria-roledescription="spinner" v-show="isLoading"></span>
                         Sign Up
                     </button>
                 </div>
@@ -50,20 +56,25 @@ export default {
             isLoading: false,
             /**@type {Boolean} Indicates if the signup was successful */
             successfulSignup: false,
+            /**@type {<Object>} Validation errors*/
+            errors: {}
         }
     },
 
     methods:{
         async submitForm(){
+            this.errors = {};
             if(this.loading){
                 return;
             }
             this.loading = true;
             const response = await userServices.createNewUser(this.userModel);
-            if(response){
+            if(response.status == 200){
                 this.userModel = new userModel();
                 this.successfulSignup = true;
                 this.repeatPassword = "";
+            }else{
+                this.errors = response.data.validationErrors;
             }
             this.loading = false;
         }
