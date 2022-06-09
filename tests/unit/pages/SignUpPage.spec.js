@@ -99,8 +99,7 @@ describe("Sign Up Page", () => {
             await userEvent.type(passwordRepeatInput, "P4ssword!");
             expect(submitButton).not.toBeEnabled();
         });
-        //BUG: Check video tutorial if question gets responded, counter increments on 2, skipping the test while wait
-        it.skip("disable button if there is a pending call", async () => {
+        it("disable button if there is a pending call", async () => {
             await userEvent.click(submitButton);
             await userEvent.click(submitButton);
 
@@ -108,25 +107,17 @@ describe("Sign Up Page", () => {
 
             expect(requestCounter).toBe(1);             
         });
-        //BUG: Spinner displays while it's in progress but this tests fails to prove it, need more research regarding to it, doesn't finds it even if it's v-show
-        it.skip("displays spinner while request in progress", async () => {
+        it("displays spinner while request in progress", async () => {
             await userEvent.click(submitButton);
 
             const spinner = screen.queryByRole("status");
-            console.log("🚀 ~ file: SignUpPage.spec.js ~ line 145 ~ it ~ spinner", spinner);
 
             expect(spinner).toBeInTheDocument();
         });
-        //BUG: Spinner displays while it's in progress but this tests fails to prove it, need more research regarding to it, doesn't finds it even if it's v-show
-        it.skip("doesn't display spinner if no api request active", async () => {
-            // const spinner = screen.queryByRole((content, element) => {
-            //     return element.tagName.toLowerCase() === 'span' && element.ariaRoleDescription === 'spinner'
-            // });
+        it("doesn't display spinner if no api request active", async () => {
             const spinner = screen.queryByRole('status');
 
-            console.log("🚀 ~ file: SignUpPage.spec.js ~ line 125 ~ spinner ~ spinner", spinner)
-
-            // expect(spinner).not.toBeInTheDocument();
+            expect(spinner).not.toBeInTheDocument();
         });
         it("displays account activation information after successful sign up request", async () => {
             await userEvent.click(submitButton);

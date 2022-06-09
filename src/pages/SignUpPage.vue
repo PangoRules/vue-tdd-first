@@ -30,7 +30,7 @@
                 </div>
                 <div class="text-center">
                     <button :disabled="disableButton" type="submit" class="btn btn-primary">
-                        <span class="spinner-border spinner-border-sm" role="status" aria-roledescription="spinner" v-show="isLoading"></span>
+                        <span class="spinner-border spinner-border-sm" role="status" v-if="isLoading"></span>
                         Sign Up
                     </button>
                 </div>
@@ -64,10 +64,10 @@ export default {
     methods:{
         async submitForm(){
             this.errors = {};
-            if(this.loading){
+            if(this.isLoading){
                 return;
             }
-            this.loading = true;
+            this.isLoading = true;
             const response = await userServices.createNewUser(this.userModel);
             if(response.status == 200){
                 this.userModel = new userModel();
@@ -76,7 +76,7 @@ export default {
             }else{
                 this.errors = response.data.validationErrors;
             }
-            this.loading = false;
+            this.isLoading = false;
         }
     },
 
