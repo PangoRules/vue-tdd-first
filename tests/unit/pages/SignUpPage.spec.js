@@ -158,6 +158,14 @@ describe("Sign Up Page", () => {
 
             expect(requestBody).toEqual(userFields);
         });
+        it("hides sign up form after successful sign up request", async() =>{
+            const form = screen.queryByTestId("form-sign-up");
+
+            await userEvent.click(submitButton);
+            await waitFor(() => {
+                expect(form).not.toBeInTheDocument();
+            });
+        });
         it("displays validation error messages", async () =>{
             server.use(
                 rest.post(apiUrls.USER_CREATE, (req, res, context) => {
@@ -191,14 +199,6 @@ describe("Sign Up Page", () => {
             expect(errorUsername).toBeInTheDocument();
             expect(errorEmail).toBeInTheDocument();
             expect(errorPassword).toBeInTheDocument();
-        });
-        it("hides sign up form after successful sign up request", async() =>{
-            const form = screen.queryByTestId("form-sign-up");
-
-            await userEvent.click(submitButton);
-            await waitFor(() => {
-                expect(form).not.toBeInTheDocument();
-            });
         });
     })
 });
