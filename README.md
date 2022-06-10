@@ -1,5 +1,7 @@
 # source
 
+
+
 ## Project setup
 ```
 npm install
@@ -18,6 +20,11 @@ npm run build
 ### Lints and fixes files
 ```
 npm run lint
+```
+
+### Run tests
+```
+npm test
 ```
 
 ### Customize configuration

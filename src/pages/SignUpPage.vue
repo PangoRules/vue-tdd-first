@@ -7,7 +7,7 @@
                 {{key}}: {{value}}
             </p>
         </div>
-        <form v-on:submit.prevent="submitForm" class="card">
+        <form v-on:submit.prevent="submitForm" class="card" data-testid="form-sign-up" v-if="!successfulSignup">
             <div class="card-header">
                 <h1 class="text-center">Sign Up</h1>
             </div>

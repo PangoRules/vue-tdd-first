@@ -1,5 +1,5 @@
 import SignUpPage from "../../../src/pages/SignUpPage.vue";
-import {render, screen}  from "@testing-library/vue";
+import {render, screen, waitFor}  from "@testing-library/vue";
 import "@testing-library/jest-dom";
 import userEvent from "@testing-library/user-event";
 import user from "../../../src/models/user.js";
@@ -191,6 +191,14 @@ describe("Sign Up Page", () => {
             expect(errorUsername).toBeInTheDocument();
             expect(errorEmail).toBeInTheDocument();
             expect(errorPassword).toBeInTheDocument();
+        });
+        it("hides sign up form after successful sign up request", async() =>{
+            const form = screen.queryByTestId("form-sign-up");
+
+            await userEvent.click(submitButton);
+            await waitFor(() => {
+                expect(form).not.toBeInTheDocument();
+            });
         });
     })
 });
