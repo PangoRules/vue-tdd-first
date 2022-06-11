@@ -1,33 +1,15 @@
 <template>
     <div class="col-lg-6 offset-lg-3 coo-md-8 offset-md-2">
         <div class="alert alert-success mt-5" v-if="successfulSignup">Please check your e-mail to activate your account</div>
-        <div class="alert alert-danger" role="errors" v-if="Object.keys(errors).length !== 0">
-            <h4>Errors</h4>
-            <p class="m-0 p-0" v-for="(value, key, index) in errors" :key="index">
-                {{key}}: {{value}}
-            </p>
-        </div>
         <form v-on:submit.prevent="submitForm" class="card" data-testid="form-sign-up" v-if="!successfulSignup">
             <div class="card-header">
                 <h1 class="text-center">Sign Up</h1>
             </div>
             <div class="card-body">
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input id="username" type="text" class="form-control" placeholder="username" v-model="userModel.username">
-                </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">E-mail</label>
-                    <input id="email" type="email" class="form-control" placeholder="e-mail" v-model="userModel.email">
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input id="password" type="password" class="form-control" placeholder="password" v-model="userModel.password">
-                </div>
-                <div class="mb-3">
-                    <label for="password-repeat" class="form-label">Password Repeat</label>
-                    <input id="password-repeat" type="password" class="form-control" placeholder="password" v-model="repeatPassword">
-                </div>
+                <input-component label="Username" id="username" :help="errors.username" v-model="userModel.username" type="text"/>
+                <input-component label="E-mail" id="email" :help="errors.email" v-model="userModel.email" type="email"/>
+                <input-component label="Password" id="password" :help="errors.password" v-model="userModel.password" type="password"/>
+                <input-component label="Password Repeat" id="password-repeat" :help="passwordMismatch ? 'Password mismatch' : ''" v-model="repeatPassword" type="password"/>
                 <div class="text-center">
                     <button :disabled="disableButton" type="submit" class="btn btn-primary">
                         <span class="spinner-border spinner-border-sm" role="status" v-if="isLoading"></span>
@@ -42,9 +24,14 @@
 <script>
 import userModel from '../models/user.js';
 import userServices from '../api/userServices.js';
+import InputComponent from '../components/Input.vue';
 
 export default {
     name: 'SignUpPage',
+
+    components:{
+        InputComponent,
+    },
 
     data(){
         return{
@@ -83,9 +70,39 @@ export default {
     computed:{
         disableButton(){
             return (this.userModel.password !== this.repeatPassword || 
-                this.userModel.password.trim().length === 0 ||
+                this.userModel.password.length === 0 ||
                 this.isLoading);
-        }
+        },
+
+        passwordMismatch(){
+            return (this.userModel.password != this.repeatPassword);
+        },
+
+        username(){
+            return this.userModel.username;
+        },
+
+        email(){
+            return this.userModel.email;
+        },
+
+        password(){
+            return this.userModel.password;
+        },
+    },
+
+    watch:{
+        username(){
+            delete this.errors.username
+        },
+
+        email(){
+            delete this.errors.email
+        },
+
+        password(){
+            delete this.errors.password
+        },
     }
 }
 </script>

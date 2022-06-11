@@ -53,7 +53,6 @@ describe("Sign Up Page", () => {
     describe("Interactions", () => {
         let requestBody;
         let requestCounter = 0;
-        let submitButton;
         const server = setupServer(
             rest.post(apiUrls.USER_CREATE, (req, res, context) => {
                 requestBody = req.body;
@@ -72,21 +71,37 @@ describe("Sign Up Page", () => {
 
         afterAll(() => server.close());
 
+        let submitButton, passwordInput, passwordRepeatInput, emailInput, usernameInput;
         /**
          * Sets up the inputs and their values to test
          */
         async function setupInputs() {
             render(SignUpPage);
-            const usernameInput = screen.queryByLabelText("Username");
-            const emailInput = screen.queryByLabelText("E-mail");
-            const passwordInput = screen.queryByLabelText("Password");
-            const passwordRepeatInput = screen.queryByLabelText("Password Repeat");
+            usernameInput = screen.queryByLabelText("Username");
+            emailInput = screen.queryByLabelText("E-mail");
+            passwordInput = screen.queryByLabelText("Password");
+            passwordRepeatInput = screen.queryByLabelText("Password Repeat");
             submitButton = screen.queryByRole('button', { name: 'Sign Up' });
 
             await userEvent.type(usernameInput, "user1");
             await userEvent.type(emailInput, "user1@gmail.com");
             await userEvent.type(passwordInput, "P4ssword");
             await userEvent.type(passwordRepeatInput, "P4ssword");
+        }
+
+        const generateValidationError = (field, message) => {
+            return rest.post(apiUrls.USER_CREATE, (req, res, context) => {
+                return res.once(
+                    context.status(400), 
+                    context.json({
+                        path: "/api/1.0/users",
+                        message: "Validation Failure",
+                        validationErrors: {
+                            [field]: message
+                        }
+                    })
+                );
+            })
         }
 
         it("enables button when password and password repeat fields have same value", async () => {
@@ -114,6 +129,15 @@ describe("Sign Up Page", () => {
 
             expect(spinner).toBeInTheDocument();
         });
+        it("hide spinner after request", async () => {
+            await userEvent.click(submitButton);
+
+            const spinner = screen.queryByRole("status");
+
+            await waitFor(() => {
+                expect(spinner).not.toBeInTheDocument();
+            });
+        });
         it("doesn't display spinner if no api request active", async () => {
             const spinner = screen.queryByRole('status');
 
@@ -134,11 +158,7 @@ describe("Sign Up Page", () => {
             expect(textSuccess).not.toBeInTheDocument();
         });
         it("does not displays account activation information after un-successful sign up request", async () => {
-            server.use(
-                rest.post(apiUrls.USER_CREATE, (req, res, context) => {
-                    return res(context.status(400));
-                })
-            )
+            server.use(generateValidationError('', ''))
 
             await userEvent.click(submitButton);
 
@@ -166,39 +186,45 @@ describe("Sign Up Page", () => {
                 expect(form).not.toBeInTheDocument();
             });
         });
-        it("displays validation error messages", async () =>{
-            server.use(
-                rest.post(apiUrls.USER_CREATE, (req, res, context) => {
-                    return res.once(
-                        context.status(400), 
-                        context.json({
-                            path: "/api/1.0/users",
-                            message: "Fallos en la validación.",
-                            validationErrors: {
-                                username: "El nombre de usuario no puede estar vacío.",
-                                email: "El E-mail no puede ser nulo.",
-                                password: "La contraseña debe tener mínimo 6 caracteres."
-                            }
-                        })
-                    );
-                })
-            )
+        it.each`
+            field           | message
+            ${'username'}   | ${'Username cannot be null'}
+            ${'email'}      | ${'E-mail cannot be null'}
+            ${'password'}   | ${'Password must be at least 6 characters'}
+        `("displays $message for field $field", async (params) =>{
+            const { field, message } = params;
+            server.use(generateValidationError(field, message));
 
             await userEvent.click(submitButton);
 
-            const errorUsername = await screen.findByText((content, element) => {
-                return element.tagName.toLowerCase() === 'p' && content.startsWith('username')
-            });
-            const errorEmail = await screen.findByText((content, element) => {
-                return element.tagName.toLowerCase() === 'p' && content.startsWith('email')
-            });
-            const errorPassword = await screen.findByText((content, element) => {
-                return element.tagName.toLowerCase() === 'p' && content.startsWith('password')
-            });
+            const text = await screen.findByText(message);
 
-            expect(errorUsername).toBeInTheDocument();
-            expect(errorEmail).toBeInTheDocument();
-            expect(errorPassword).toBeInTheDocument();
+            expect(text).toBeInTheDocument();
+        });
+        it("displays password mismatch error", async () =>{
+            await userEvent.type(passwordRepeatInput, "P4ssword1");
+
+            const text = await screen.findByText("Password mismatch");
+
+            expect(text).toBeInTheDocument();
+        });
+        it.each`
+            field           | message                                           | label
+            ${'username'}   | ${'Username cannot be null'}                      | ${"Username"}
+            ${'email'}      | ${'E-mail cannot be null'}                        | ${"E-mail"}
+            ${'password'}   | ${'Password must be at least 6 characters'}       | ${"Password"}
+        `("clears validation error after $field field is updated", async ({field, message, label}) =>{
+            server.use(generateValidationError(field, message));
+
+            await userEvent.click(submitButton);
+
+            const text = await screen.findByText(message);
+
+            const input = screen.queryByLabelText(label);
+
+            await userEvent.type(input, "updated");
+
+            expect(text).not.toBeInTheDocument();
         });
     })
 });
