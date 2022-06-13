@@ -7,6 +7,8 @@ import { setupServer } from "msw/node";
 import { rest } from "msw";
 import apiUrls from "../../../src/util/apiUrls.js";
 import i18n from "../../../src/locales/i18n.js";
+import en from "../../../src/locales/en/en.json";
+import es from "../../../src/locales/es/es.json";
 
 describe("Sign Up Page", () => {
     describe("Layout", () => {
@@ -227,5 +229,41 @@ describe("Sign Up Page", () => {
 
             expect(text).not.toBeInTheDocument();
         });
-    })
+    });
+    describe("Internationalization", () => {
+        function setup(){
+            render(SignUpPage,{ global:{plugins:[i18n]}  });
+        }
+
+        it("initially displays all text in english", () =>{
+            setup();
+
+            expect(screen.queryByRole("heading", {name: en.signUp})).toBeInTheDocument();
+            expect(screen.queryByRole("button", {name: en.signUp})).toBeInTheDocument();
+            expect(screen.queryByLabelText(en.username)).toBeInTheDocument();
+            expect(screen.queryByLabelText(en.email)).toBeInTheDocument();
+            expect(screen.queryByLabelText(en.password)).toBeInTheDocument();
+            expect(screen.queryByLabelText(en.passwordRepeat)).toBeInTheDocument();
+        });
+
+        fit.each`
+            language        | jsonToSelect
+            ${'Spanish'}    | ${'es'}
+            ${'English'}    | ${'en'}
+        `("displays all text in $language after selecting the language", async ({language, jsonToSelect}) =>{
+            setup();
+            const langBtn = screen.queryByTitle(language);
+
+            await userEvent.click(langBtn);
+
+            const jsonSelected = jsonToSelect === 'es' ? es : en;
+
+            expect(screen.queryByRole("heading", {name: jsonSelected.signUp})).toBeInTheDocument();
+            expect(screen.queryByRole("button", {name: jsonSelected.signUp})).toBeInTheDocument();
+            expect(screen.queryByLabelText(jsonSelected.username)).toBeInTheDocument();
+            expect(screen.queryByLabelText(jsonSelected.email)).toBeInTheDocument();
+            expect(screen.queryByLabelText(jsonSelected.password)).toBeInTheDocument();
+            expect(screen.queryByLabelText(jsonSelected.passwordRepeat)).toBeInTheDocument();
+        });
+    });
 });

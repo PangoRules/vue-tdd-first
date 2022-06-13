@@ -13,12 +13,18 @@
                 <div class="text-center">
                     <button :disabled="disableButton" type="submit" class="btn btn-primary">
                         <span class="spinner-border spinner-border-sm" role="status" v-if="isLoading"></span>
-                        Sign Up
+                        {{$t("signUp")}}
                     </button>
                 </div>
             </div>
         </form>
+        <div>
+            <img src="https://countryflagsapi.com/png/mx" alt="Flag of Mexico" title="Spanish" @click="$i18n.locale = 'es'">
+            <img src="https://countryflagsapi.com/png/usa" alt="Flag of USA" title="English" @click="$i18n.locale = 'en'">
+        </div>
     </div>
+    <!-- <span title="Spanish" @click="$i18n.locale = 'es'">ES</span>
+    <span title="English" @click="$i18n.locale = 'en'">EN</span> -->
 </template>
 
 <script>
@@ -108,5 +114,11 @@ export default {
 </script>
 
 <style>
-
+img{
+    cursor: pointer;
+    width: 2rem!important;
+}
+img:not(:first-child){
+    margin-inline: 1rem!important;
+}
 </style>
