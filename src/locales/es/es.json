@@ -1,0 +1,7 @@
+{
+    "signUp": "Registro",
+    "username": "Nombre de Usuario",
+    "email": "Correo Electronico",
+    "password": "Contraseña",
+    "passwordRepeat": "Repetir Contraseña"
+}

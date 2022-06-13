@@ -6,11 +6,12 @@ import user from "../../../src/models/user.js";
 import { setupServer } from "msw/node";
 import { rest } from "msw";
 import apiUrls from "../../../src/util/apiUrls.js";
+import i18n from "../../../src/locales/i18n.js";
 
 describe("Sign Up Page", () => {
     describe("Layout", () => {
         beforeEach(() => {
-            render(SignUpPage);
+            render(SignUpPage,{ global:{plugins:[i18n]}  });
         });        
         
         it('has sign up header',() => {
@@ -76,7 +77,7 @@ describe("Sign Up Page", () => {
          * Sets up the inputs and their values to test
          */
         async function setupInputs() {
-            render(SignUpPage);
+            render(SignUpPage,{ global:{plugins:[i18n]}  });
             usernameInput = screen.queryByLabelText("Username");
             emailInput = screen.queryByLabelText("E-mail");
             passwordInput = screen.queryByLabelText("Password");
