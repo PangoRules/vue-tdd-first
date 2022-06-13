@@ -1,6 +1,8 @@
 <template>
-    <img src="https://countryflagsapi.com/png/mx" alt="Flag of Mexico" title="Spanish" @click="$i18n.locale = 'es'">
-    <img src="https://countryflagsapi.com/png/usa" alt="Flag of USA" title="English" @click="$i18n.locale = 'en'">
+    <div>
+        <img src="https://countryflagsapi.com/png/mx" alt="Flag of Mexico" title="Spanish" @click="$i18n.locale = 'es'">
+        <img src="https://countryflagsapi.com/png/usa" alt="Flag of USA" title="English" @click="$i18n.locale = 'en'">
+    </div>
 </template>
 
 <script setup>

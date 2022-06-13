@@ -9,7 +9,7 @@
                 <input-component :label="$t('username')" id="username" :help="errors.username" v-model="userModel.username" type="text"/>
                 <input-component :label="$t('email')" id="email" :help="errors.email" v-model="userModel.email" type="email"/>
                 <input-component :label="$t('password')" id="password" :help="errors.password" v-model="userModel.password" type="password"/>
-                <input-component :label="$t('passwordRepeat')" id="password-repeat" :help="passwordMismatch ? 'Password mismatch' : ''" v-model="repeatPassword" type="password"/>
+                <input-component :label="$t('passwordRepeat')" id="password-repeat" :help="passwordMismatch ? $t('passwordMismatchValidation') : ''" v-model="repeatPassword" type="password"/>
                 <div class="text-center">
                     <button :disabled="disableButton" type="submit" class="btn btn-primary">
                         <span class="spinner-border spinner-border-sm" role="status" v-if="isLoading"></span>
