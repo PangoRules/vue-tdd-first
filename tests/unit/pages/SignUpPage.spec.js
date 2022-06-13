@@ -9,6 +9,7 @@ import apiUrls from "../../../src/util/apiUrls.js";
 import i18n from "../../../src/locales/i18n.js";
 import en from "../../../src/locales/en/en.json";
 import es from "../../../src/locales/es/es.json";
+import LanguageSelector from "../../../src/components/LanguageSelector.vue";
 
 describe("Sign Up Page", () => {
     describe("Layout", () => {
@@ -232,8 +233,27 @@ describe("Sign Up Page", () => {
     });
     describe("Internationalization", () => {
         function setup(){
-            render(SignUpPage,{ global:{plugins:[i18n]}  });
+            const app = {
+                components:{
+                    SignUpPage,
+                    LanguageSelector
+                },
+                template:`
+                <SignUpPage />
+                <LanguageSelector />
+                `,
+            };
+
+            render(app,{ 
+                global:{
+                    plugins:[i18n]
+                }  
+            });
         }
+
+        afterEach(() => {
+            i18n.global.locale = 'en';
+        });
 
         it("initially displays all text in english", () =>{
             setup();
@@ -246,7 +266,7 @@ describe("Sign Up Page", () => {
             expect(screen.queryByLabelText(en.passwordRepeat)).toBeInTheDocument();
         });
 
-        fit.each`
+        it.each`
             language        | jsonToSelect
             ${'Spanish'}    | ${'es'}
             ${'English'}    | ${'en'}
