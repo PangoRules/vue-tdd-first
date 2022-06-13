@@ -1,6 +1,6 @@
 <template>
     <div class="col-lg-6 offset-lg-3 coo-md-8 offset-md-2">
-        <div class="alert alert-success mt-5" v-if="successfulSignup">Please check your e-mail to activate your account</div>
+        <div class="alert alert-success mt-5" v-if="successfulSignup">{{$t("accountActivationNotification")}}</div>
         <form v-on:submit.prevent="submitForm" class="card" data-testid="form-sign-up" v-if="!successfulSignup">
             <div class="card-header">
                 <h1 class="text-center">{{$t("signUp")}}</h1>
@@ -61,7 +61,7 @@ export default {
                 this.successfulSignup = true;
                 this.repeatPassword = "";
             }else{
-                this.errors = response.data.validationErrors;
+                this.errors =  response.data ? response.data.validationErrors : {};
             }
             this.isLoading = false;
         }
