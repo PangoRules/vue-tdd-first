@@ -1,0 +1,9 @@
+{
+    "signUp": "Registro",
+    "username": "Nombre de Usuario",
+    "email": "Correo Electronico",
+    "password": "Contraseña",
+    "passwordRepeat": "Repetir Contraseña",
+    "passwordMismatchValidation": "Las contraseñas no coinciden",
+    "accountActivationNotification": "Porfavor revisa tu correo electronico para activar tu cuenta"
+}

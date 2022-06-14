@@ -1,19 +1,19 @@
 <template>
     <div class="col-lg-6 offset-lg-3 coo-md-8 offset-md-2">
-        <div class="alert alert-success mt-5" v-if="successfulSignup">Please check your e-mail to activate your account</div>
+        <div class="alert alert-success mt-5" v-if="successfulSignup">{{$t("accountActivationNotification")}}</div>
         <form v-on:submit.prevent="submitForm" class="card" data-testid="form-sign-up" v-if="!successfulSignup">
             <div class="card-header">
-                <h1 class="text-center">Sign Up</h1>
+                <h1 class="text-center">{{$t("signUp")}}</h1>
             </div>
             <div class="card-body">
-                <input-component label="Username" id="username" :help="errors.username" v-model="userModel.username" type="text"/>
-                <input-component label="E-mail" id="email" :help="errors.email" v-model="userModel.email" type="email"/>
-                <input-component label="Password" id="password" :help="errors.password" v-model="userModel.password" type="password"/>
-                <input-component label="Password Repeat" id="password-repeat" :help="passwordMismatch ? 'Password mismatch' : ''" v-model="repeatPassword" type="password"/>
+                <input-component :label="$t('username')" id="username" :help="errors.username" v-model="userModel.username" type="text"/>
+                <input-component :label="$t('email')" id="email" :help="errors.email" v-model="userModel.email" type="email"/>
+                <input-component :label="$t('password')" id="password" :help="errors.password" v-model="userModel.password" type="password"/>
+                <input-component :label="$t('passwordRepeat')" id="password-repeat" :help="passwordMismatch ? $t('passwordMismatchValidation') : ''" v-model="repeatPassword" type="password"/>
                 <div class="text-center">
                     <button :disabled="disableButton" type="submit" class="btn btn-primary">
                         <span class="spinner-border spinner-border-sm" role="status" v-if="isLoading"></span>
-                        Sign Up
+                        {{$t("signUp")}}
                     </button>
                 </div>
             </div>
@@ -56,12 +56,12 @@ export default {
             }
             this.isLoading = true;
             const response = await userServices.createNewUser(this.userModel);
-            if(response.status == 200){
+            if(response.status === 200){
                 this.userModel = new userModel();
                 this.successfulSignup = true;
                 this.repeatPassword = "";
-            }else{
-                this.errors = response.data.validationErrors;
+            }else if(response.status === 400){
+                this.errors =  response.data ? response.data.validationErrors : {};
             }
             this.isLoading = false;
         }
