@@ -1,6 +1,5 @@
 import SignUpPage from "../../../src/pages/SignUpPage.vue";
 import {render, screen, waitFor}  from "@testing-library/vue";
-import "@testing-library/jest-dom";
 import userEvent from "@testing-library/user-event";
 import user from "../../../src/models/user.js";
 import { setupServer } from "msw/node";
@@ -68,10 +67,6 @@ beforeEach(async () => {
 });
 
 afterAll(() => server.close());
-
-afterEach(() => {
-    i18n.global.locale = 'en';
-});
 
 describe("Sign Up Page", () => {
     describe("Layout", () => {        

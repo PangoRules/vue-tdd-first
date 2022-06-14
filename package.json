@@ -9,7 +9,8 @@
       ".*\\.(vue)$": "vue-jest",
       ".*\\.(js)$": "babel-jest"
     },
-    "testEnvironment": "jsdom"
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv":["./tests/setupTest.js"]
   },
   "version": "0.1.0",
   "private": true,
