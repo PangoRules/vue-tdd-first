@@ -278,21 +278,21 @@ describe("Sign Up Page", () => {
             expect(validation).toBeInTheDocument();
         });
         //BUG: if spanish goes first, it works and no other test are being executed it works, else it fails on spanish one.
-        // it.each.skip`
-        //     lang        | title
-        //     ${'en'}     | ${'English'}
-        //     ${'es'}     | ${'Spanish'}
-        // `("sends accept-language having $lang to backend for sign up request", async({lang, title})=>{
-        //     const languageBtn = screen.queryByTitle(title);
+        it.each`
+            lang        | title
+            ${'en'}     | ${'English'}
+            ${'es'}     | ${'Spanish'}
+        `("sends accept-language having $lang to backend for sign up request", async({lang, title})=>{
+            const languageBtn = screen.queryByTitle(title);
             
-        //     await userEvent.click(languageBtn);
+            await userEvent.click(languageBtn);
 
-        //     await userEvent.click(submitButton);
+            await userEvent.click(submitButton);
 
-        //     await screen.findByText(lang === 'en' ? en.accountActivationNotification : es.accountActivationNotification);
+            await screen.findByText(lang === 'en' ? en.accountActivationNotification : es.accountActivationNotification);
 
-        //     expect(acceptLanguageHeader).toBe(lang);
-        // });
+            expect(acceptLanguageHeader).toBe(lang);
+        });
         it("displays account activation information in Spanish after selecting that language", async () =>{
             await userEvent.click(spanishLanguage);
 

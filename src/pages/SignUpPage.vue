@@ -56,11 +56,11 @@ export default {
             }
             this.isLoading = true;
             const response = await userServices.createNewUser(this.userModel);
-            if(response.status == 200){
+            if(response.status === 200){
                 this.userModel = new userModel();
                 this.successfulSignup = true;
                 this.repeatPassword = "";
-            }else{
+            }else if(response.status === 400){
                 this.errors =  response.data ? response.data.validationErrors : {};
             }
             this.isLoading = false;
