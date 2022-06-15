@@ -1,5 +1,5 @@
 <template>
-    <div class="col-lg-6 offset-lg-3 coo-md-8 offset-md-2">
+    <div class="col-lg-6 offset-lg-3 coo-md-8 offset-md-2" data-testid="signup-page">
         <div class="alert alert-success mt-5" v-if="successfulSignup">{{$t("accountActivationNotification")}}</div>
         <form v-on:submit.prevent="submitForm" class="card" data-testid="form-sign-up" v-if="!successfulSignup">
             <div class="card-header">

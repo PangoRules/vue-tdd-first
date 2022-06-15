@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div data-testid="home-page">
         <h1>HomePage</h1>
     </div>
 </template>

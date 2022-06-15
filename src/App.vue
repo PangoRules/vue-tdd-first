@@ -2,52 +2,38 @@
     <div class="shadow-sm bg-light">
         <nav class="navbar navbar-expand navbar-light container">
             <div class="container-fluid ">
-                <a
+                <router-link
                   class="navbar-brand"
-                  @click="onClickLink"
-                  href="/"
+                  to="/"
                   title="Home">
                   <img src="./assets/hoaxify.png" width="60" alt="Hoaxify Logo">
-                  Hoaxify</a>
+                  Hoaxify</router-link>
                 <ul class="navbar-nav ml-auto">
-                    <a
+                    <router-link
                       class="nav-link"
-                      @click="onClickLink"
-                      href="/signup"
-                      title="Sign-Up">{{$t('signUp')}}</a>
-                      <a
+                      to="/signup"
+                      title="Sign-Up">{{$t('signUp')}}</router-link>
+                      <router-link
                       class="nav-link"
-                      @click="onClickLink"
-                      href="/login"
-                      title="Login">{{$t('login')}}</a>
+                      to="/login"
+                      title="Login">{{$t('login')}}</router-link>
                 </ul>
             </div>
         </nav>
     </div>
     <div class="container">
-        <HomePage data-testid="home-page" v-if="path==='/'"/>
-        <SignUpPage data-testid="signup-page" v-else-if="path==='/signup'"/>
-        <LoginPage data-testid="login-page" v-else-if="path==='/login'"/>
-        <UserPage data-testid="user-page" v-else-if="path.startsWith('/user/')"/>
+        <router-view />
         <LanguageSelector />
     </div>
 </template>
 
 <script>
-import SignUpPage from './pages/SignUpPage.vue';
 import LanguageSelector from './components/LanguageSelector.vue';
-import HomePage from './pages/HomePage.vue';
-import LoginPage from './pages/LoginPage.vue';
-import UserPage from './pages/UserPage.vue';
 
 export default {
     name: 'App',
     components: {
-        SignUpPage,
         LanguageSelector,
-        HomePage,
-        LoginPage,
-        UserPage
     },
     data(){
         return {
