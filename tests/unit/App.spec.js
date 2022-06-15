@@ -1,6 +1,7 @@
 import {render, screen, waitFor}  from "@testing-library/vue";
 import App from "../../src/App.vue";
 import i18n from "../../src/locales/i18n.js";
+import userEvent from "@testing-library/user-event"
 
 function setup(path){
     window.history.pushState({}, "", path);
@@ -42,5 +43,34 @@ describe("Routing", () => {
         setup(path);
         const page = screen.queryByTestId(pageTestId);
         expect(page).not.toBeInTheDocument();
+    });
+    it.each`
+        targetPage
+        ${'Home'}
+        ${'Sign-Up'}
+        ${'Login'}
+    `("has link to $targetPage on navbar", ({targetPage}) =>{
+        setup("/");
+        const link = screen.queryByRole("link", {name: targetPage});
+        expect(link).toBeInTheDocument();
+    });
+    it.each`
+        initialPath     | clickingTo    | visiblePage
+        ${'/'}          | ${'Sign-Up'}  | ${'signup-page'}
+        ${'/signup'}    | ${'Home'}     | ${'home-page'}
+        ${'/signup'}    | ${'Login'}     | ${'login-page'}
+    `("displays sign-up page after clicking sign-up link", async ({initialPath, clickingTo, visiblePage}) =>{
+        setup(initialPath);
+        const link = screen.queryByRole("link", {name: clickingTo});
+        await userEvent.click(link);
+        const page = screen.queryByTestId(visiblePage);
+        expect(page).toBeInTheDocument();
+    });
+    it("displays home page when clicking brand logo", async() =>{
+        setup('/login');
+        const image = screen.queryByAltText("Hoaxify Logo");
+        await userEvent.click(image);
+        const page = screen.queryByTestId("home-page");
+        expect(page).toBeInTheDocument();
     });
 });

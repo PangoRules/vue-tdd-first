@@ -1,4 +1,29 @@
 <template>
+    <div class="shadow-sm bg-light">
+        <nav class="navbar navbar-expand navbar-light container">
+            <div class="container-fluid ">
+                <a
+                  class="navbar-brand"
+                  @click="onClickLink"
+                  href="/"
+                  title="Home">
+                  <img src="./assets/hoaxify.png" width="60" alt="Hoaxify Logo">
+                  Hoaxify</a>
+                <ul class="navbar-nav ml-auto">
+                    <a
+                      class="nav-link"
+                      @click="onClickLink"
+                      href="/signup"
+                      title="Sign-Up">{{$t('signUp')}}</a>
+                      <a
+                      class="nav-link"
+                      @click="onClickLink"
+                      href="/login"
+                      title="Login">{{$t('login')}}</a>
+                </ul>
+            </div>
+        </nav>
+    </div>
     <div class="container">
         <HomePage data-testid="home-page" v-if="path==='/'"/>
         <SignUpPage data-testid="signup-page" v-else-if="path==='/signup'"/>
@@ -24,9 +49,20 @@ export default {
         LoginPage,
         UserPage
     },
-    computed:{
-        path(){
-            return window.location.pathname;
+    data(){
+        return {
+            path: window.location.pathname
+        }
+    },
+    // computed:{
+    //     path(){
+    //         return window.location.pathname;
+    //     }
+    // },
+    methods:{
+        onClickLink(event){
+            this.path = event.currentTarget.attributes.href.value;
+            window.history.pushState({}, "", this.path)
         }
     }
 }
@@ -38,6 +74,5 @@ export default {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: #2c3e50;
-    margin-top: 60px;
 }
 </style>
