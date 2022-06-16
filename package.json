@@ -1,6 +1,10 @@
 {
   "name": "HOAX-TDD",
   "jest": {
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/tests/fileMock.js",
+      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js"
+    },
     "moduleFileExtensions": [
       "js",
       "vue"
@@ -9,7 +13,10 @@
       ".*\\.(vue)$": "vue-jest",
       ".*\\.(js)$": "babel-jest"
     },
-    "testEnvironment": "jsdom"
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": [
+      "./tests/setupTest.js"
+    ]
   },
   "version": "0.1.0",
   "private": true,
@@ -23,7 +30,8 @@
     "axios": "^0.27.2",
     "core-js": "^3.6.5",
     "vue": "^3.0.0",
-    "vue-i18n": "^9.1.10"
+    "vue-i18n": "^9.1.10",
+    "vue-router": "^4.0.16"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.4",
