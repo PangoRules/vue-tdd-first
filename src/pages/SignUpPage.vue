@@ -12,7 +12,7 @@
                 <input-component :label="$t('passwordRepeat')" id="password-repeat" :help="passwordMismatch ? $t('passwordMismatchValidation') : ''" v-model="repeatPassword" type="password"/>
                 <div class="text-center">
                     <button :disabled="disableButton" type="submit" class="btn btn-primary">
-                        <span class="spinner-border spinner-border-sm" role="status" v-if="isLoading"></span>
+                        <spinner-component v-if="isLoading"/>
                         {{$t("signUp")}}
                     </button>
                 </div>
@@ -23,14 +23,15 @@
 
 <script>
 import userModel from '../models/user.js';
-import userServices from '../api/userServices.js';
+import { createNewUser } from '../api/userServices.js';
 import InputComponent from '../components/Input.vue';
+import SpinnerComponent from '../components/Spinner.vue';
 
 export default {
     name: 'SignUpPage',
 
     components:{
-        InputComponent,
+        InputComponent, SpinnerComponent
     },
 
     data(){
@@ -55,7 +56,7 @@ export default {
                 return;
             }
             this.isLoading = true;
-            const response = await userServices.createNewUser(this.userModel);
+            const response = await createNewUser(this.userModel);
             if(response.status === 200){
                 this.userModel = new userModel();
                 this.successfulSignup = true;
