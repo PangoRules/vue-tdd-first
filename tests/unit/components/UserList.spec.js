@@ -3,6 +3,7 @@ import {render, screen} from "@testing-library/vue";
 import { setupServer } from "msw/node";
 import { rest } from "msw";
 import apiUrls from "../../../src/util/apiUrls.js";
+import userEvent from "@testing-library/user-event";
 
 const users = [
     { id: 1, username: "user1", email: "user1@mail.com", image: null },
@@ -49,5 +50,49 @@ describe("User List", () => {
         render(UserList);
         const users = await screen.findAllByText(/user/);
         expect(users.length).toBe(3);
+    });
+    it("displays next page link", async () =>{
+        render(UserList);
+        await screen.findByText("user1");
+        expect(screen.queryByText("next >")).toBeInTheDocument();
+    });
+    it("displays next page after clicking next", async () =>{
+        render(UserList);
+        await screen.findByText("user1");
+        const nextPageLink = screen.queryByText("next >");
+        await userEvent.click(nextPageLink);
+        const firstUserOnPage2 = await screen.findByText("user4");
+        expect(firstUserOnPage2).toBeInTheDocument();
+    });
+    it("disables next page button when on last page", async () =>{
+        render(UserList);
+        await screen.findByText("user1");
+        const nextPageLink = screen.queryByText("next >");
+        await userEvent.click(nextPageLink);
+        await screen.findByText("user4");
+        await userEvent.click(nextPageLink);
+        await screen.findByText("user7");
+        expect(nextPageLink).toBeDisabled();
+    });
+    it("displays disabled previous page button when in first page", async() => {
+        render(UserList);
+        await screen.findByText("user1");
+        expect(screen.queryByText("< previous")).toBeDisabled();
+    });
+    it("displays previous page button enabled while on page 2", async () =>{
+        render(UserList);
+        await screen.findByText("user1");
+        await userEvent.click(screen.queryByText("next >"));
+        await screen.findByText("user4");
+        expect(screen.queryByText("< previous")).toBeEnabled();
+    });
+    it("displays previous page after clicking previous page button", async () =>{
+        render(UserList);
+        await screen.findByText("user1");
+        await userEvent.click(screen.queryByText("next >"));
+        await screen.findByText("user4");
+        await userEvent.click(screen.queryByText("< previous"));
+        const currentPageFirstUser = await screen.findByText("user1");
+        expect(currentPageFirstUser).toBeInTheDocument();
     });
 });
