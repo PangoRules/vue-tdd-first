@@ -8,9 +8,20 @@ import { rest } from "msw";
 import apiUrls from "../../src/util/apiUrls.js";
 
 const server = setupServer(
-    rest.post(`${apiUrls.USER_ACTIVATE}:token`, (req, res, ctx) =>{
-        return res(ctx.status(200));	
-    })
+	rest.post(`${apiUrls.USER_ACTIVATE}:token`, (req, res, ctx) => {
+		return res(ctx.status(200));
+	}),
+	rest.get(apiUrls.USER_CREATE, (req, res, context) => {
+		return res(
+			context.status(200),
+			context.json({
+				content: [],
+				page: 0,
+				size: 0,
+				totalPages: 0,
+			})
+		);
+	})
 );
 
 beforeAll(() => server.listen());

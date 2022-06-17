@@ -34,4 +34,18 @@ async function activateUser(token){
     }
 }
 
-export{ createNewUser, activateUser };
+/**
+ * Function to return list of users
+ * @param {String} query - Pagination query to specify page and size, should be like: '?page=X&size=X'
+ * @returns Response object with list of users
+ */
+async function getUsers(query=''){
+    try{
+        let response = await apis.serverBaseApi().get(`${apiUrls.USER_GET_USERS}${query}`);
+        return response;
+    }catch(error){
+        return error.response;
+    }
+}
+
+export{ createNewUser, activateUser, getUsers };
