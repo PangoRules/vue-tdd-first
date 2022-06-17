@@ -36,12 +36,17 @@ async function activateUser(token){
 
 /**
  * Function to return list of users
- * @param {String} query - Pagination query to specify page and size, should be like: '?page=X&size=X'
+ * @param {Number} page - Number of the page to get users from
+ * @param {Number} size - Amount of users to get
  * @returns Response object with list of users
  */
-async function getUsers(query=''){
+async function getUsers(page=0, size=3){
     try{
-        let response = await apis.serverBaseApi().get(`${apiUrls.USER_GET_USERS}${query}`);
+        let response = await apis.serverBaseApi().get(apiUrls.USER_GET_USERS,
+            {
+                params:{page: page, size: size}
+            }
+        );
         return response;
     }catch(error){
         return error.response;
