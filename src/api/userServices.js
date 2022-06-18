@@ -41,16 +41,30 @@ async function activateUser(token){
  * @returns Response object with list of users
  */
 async function getUsers(page=0, size=3){
-    try{
-        let response = await apis.serverBaseApi().get(apiUrls.USER_GET_USERS,
-            {
-                params:{page: page, size: size}
-            }
-        );
-        return response;
-    }catch(error){
-        return error.response;
-    }
+	try{
+		let response = await apis.serverBaseApi().get(apiUrls.USER_GET_USERS,
+				{
+						params:{page: page, size: size}
+				}
+		);
+		return response;
+	}catch(error){
+		return error.response;
+	}
 }
 
-export{ createNewUser, activateUser, getUsers };
+/**
+ * Function that querys an user depending on it's id
+ * @param {Number} id Id of the user to query
+ * @returns Response object with user data
+ */
+async function getUser(id){
+	try{
+		let response = await apis.serverBaseApi().get(`${apiUrls.USER_GET_USER}${id}`);
+		return response;
+	}catch(error){
+		return error.response;
+	}
+}
+
+export{ createNewUser, activateUser, getUsers, getUser };

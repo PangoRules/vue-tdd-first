@@ -23,6 +23,15 @@ const server = setupServer(
 				totalPages: 0,
 			})
 		);
+	}),
+	rest.get(`${apiUrls.USER_GET_USER}:id`, (req, res, context) => {
+		const id = Number.parseInt(req.params.id);
+		return res(context.status(200), context.json({
+			id: id,
+			username: "user"+id,
+			email: "user"+id+"@mail.com",
+			image: null
+		}));
 	})
 );
 
