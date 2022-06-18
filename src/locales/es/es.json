@@ -6,5 +6,10 @@
     "passwordRepeat": "Repetir Contraseña",
     "passwordMismatchValidation": "Las contraseñas no coinciden",
     "accountActivationNotification": "Porfavor revisa tu correo electronico para activar tu cuenta",
-    "login": "Iniciar Sesión"
+    "login": "Iniciar Sesión",
+		"userListPage":{
+			"header": "Usuarios",
+			"nextPage": "siguiente >",
+			"previousPage": "< anterior"
+		}
 }

@@ -5,6 +5,10 @@ import { rest } from "msw";
 import apiUrls from "../../../src/util/apiUrls.js";
 import userEvent from "@testing-library/user-event";
 import router from "../../../src/routes/router.js";
+import i18n from "../../../src/locales/i18n.js";
+import en from "../../../src/locales/en/en.json";
+import es from "../../../src/locales/es/es.json";
+import LanguageSelector from "../../../src/components/LanguageSelector.vue";
 
 const users = [
 	{ id: 1, username: "user1", email: "user1@mail.com", image: null },
@@ -47,10 +51,21 @@ beforeEach(async () => server.resetHandlers());
 afterAll(() => server.close());
 
 async function setup(){
-	render(UserList,{
+	const app = {
+		components:{
+			UserList,
+			LanguageSelector
+		},
+		template:`
+		<UserList />
+		<LanguageSelector />
+		`,
+	};
+
+	render(app,{ 
 		global:{
-			plugins:[router]
-		}
+				plugins:[router, i18n]
+		}  
 	});
 	await router.isReady();
 }
@@ -123,4 +138,26 @@ describe("User List", () => {
 		const spinner = screen.queryByRole("status");
 		expect(spinner).toBeInTheDocument();
 	})
+});
+
+describe("Internationalization", () =>{
+	it("initially displays header and navigation links in english", async()=>{
+		await setup();
+		await screen.findByText("user1");
+		await userEvent.click(screen.queryByText("next >"));
+		await screen.findByText("user4");
+		expect(screen.queryByText(en.userListPage.header)).toBeInTheDocument();
+		expect(screen.queryByText(en.userListPage.nextPage)).toBeInTheDocument();
+		expect(screen.queryByText(en.userListPage.previousPage)).toBeInTheDocument();
+	});
+	it("initially displays header and navigation links in spanish after selecting it", async()=>{
+		await setup();
+		await screen.findByText("user1");
+		await userEvent.click(screen.queryByText("next >"));
+		await screen.findByText("user4");
+		await userEvent.click(screen.queryByTitle("Spanish"));
+		expect(screen.queryByText(es.userListPage.header)).toBeInTheDocument();
+		expect(screen.queryByText(es.userListPage.nextPage)).toBeInTheDocument();
+		expect(screen.queryByText(es.userListPage.previousPage)).toBeInTheDocument();
+	});
 });

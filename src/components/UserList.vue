@@ -1,7 +1,7 @@
 <template>
 	<div data-testid="userlist-page" class="card">
 		<div class="card-header text-center">
-			<h3>Users</h3>
+			<h3>{{$t("userListPage.header")}}</h3>
 		</div>
 		<ul class="list-group list-group-flush">
 			<li
@@ -18,13 +18,13 @@
 				:disabled="disablePrevious"
 				v-show="!isLoading"
 				class="btn btn-outline-secondary btn-sm">
-				&lt; previous</button>
+				{{$t("userListPage.previousPage")}}</button>
 			<button
 				@click="loadNext()"
 				:disabled="disableNext"
 				v-show="!isLoading"
 				class="btn btn-outline-secondary btn-sm">
-				next &gt;</button>
+				{{$t("userListPage.nextPage")}}</button>
 				<spinner-component size="medium" v-if="isLoading"/>
 		</div>
 	</div>
