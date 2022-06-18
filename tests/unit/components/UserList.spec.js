@@ -105,4 +105,22 @@ describe("User List", () => {
 		const currentPageFirstUser = await screen.findByText("user1");
 		expect(currentPageFirstUser).toBeInTheDocument();
 	});
+	it("displays spinner during the api call", async () => {
+		await setup();
+		const spinner = screen.queryByRole("status");
+		expect(spinner).toBeInTheDocument();
+	});
+	it("hides spinner after api call is completed", async () =>{
+		await setup();
+		const spinner = screen.queryByRole("status");
+		await screen.findByText("user1");
+		expect(spinner).not.toBeInTheDocument();
+	});
+	it("displays spinner after clicking next", async() =>{
+		await setup();
+		await screen.findByText("user1");
+		await userEvent.click(screen.queryByText("next >"));
+		const spinner = screen.queryByRole("status");
+		expect(spinner).toBeInTheDocument();
+	})
 });

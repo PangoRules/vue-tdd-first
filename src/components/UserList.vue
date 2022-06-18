@@ -6,32 +6,41 @@
 		<ul class="list-group list-group-flush">
 			<li
 				class="list-group-item list-group-item-action"
-				v-for="(user, index) in page.content"
-				v-bind:key="index"
+				v-for="(user) in page.content"
+				:key="user.id"
 				@click="$router.push(`/user/${user.id}`)">
-				{{user.username}}
+				<user-list-item-component :user="user"/>
 				</li>
 		</ul>
 		<div class="card-footer text-center">
 			<button
 				@click="loadPrevious()"
 				:disabled="disablePrevious"
+				v-show="!isLoading"
 				class="btn btn-outline-secondary btn-sm">
 				&lt; previous</button>
 			<button
 				@click="loadNext()"
 				:disabled="disableNext"
+				v-show="!isLoading"
 				class="btn btn-outline-secondary btn-sm">
 				next &gt;</button>
+				<spinner-component size="medium" v-if="isLoading"/>
 		</div>
 	</div>
 </template>
 
 <script>
 import { getUsers } from '../api/userServices.js';
+import UserListItemComponent from '../components/UserListItem.vue';
+import SpinnerComponent from '../components/Spinner.vue';
 
 export default{
 	name: 'UserList',
+
+	components:{
+		UserListItemComponent, SpinnerComponent
+	},
 
 	data(){
 		return{
@@ -45,7 +54,9 @@ export default{
 			/**@type {Number} Page position on the api call*/
 			currentPage: 0,
 			/**@type {Number} Size of user list to show*/
-			listSize: 3
+			listSize: 3,
+			/**@type  {Boolean} Detects if there is something loading to show or hide spinner*/
+			isLoading: false
 		}
 	},
 
@@ -55,12 +66,14 @@ export default{
 
 	methods:{
 		async loadUsers(){
+			this.isLoading = true;
 			let response = await getUsers(this.currentPage, this.listSize);
 			if(response.status === 200){
 				this.page = response.data;
 			}else{
 				return;
 			}
+			this.isLoading = false;
 		},
 
 		async loadNext(){

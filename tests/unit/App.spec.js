@@ -113,7 +113,7 @@ describe("Routing", () => {
 			const page = screen.queryByTestId("home-page");
 			expect(page).toBeInTheDocument();
 	});
-	fit("navigates to user page when clicking the username on user list", async () =>{
+	it("navigates to user page when clicking the username on user list", async () =>{
 			await setup('/');
 			const user = await screen.findByText("user-in-list");
 			await userEvent.click(user);
