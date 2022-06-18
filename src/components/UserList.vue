@@ -7,7 +7,10 @@
 			<li
 				class="list-group-item list-group-item-action"
 				v-for="(user, index) in page.content"
-				v-bind:key="index">{{user.username}}</li>
+				v-bind:key="index"
+				@click="$router.push(`/user/${user.id}`)">
+				{{user.username}}
+				</li>
 		</ul>
 		<div class="card-footer text-center">
 			<button
@@ -88,5 +91,7 @@ export default{
 </script>
 
 <style scoped>
-
+li{
+	cursor: pointer;
+}
 </style>
