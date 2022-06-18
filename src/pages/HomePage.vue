@@ -1,11 +1,29 @@
 <template>
     <div data-testid="home-page">
-        <h1>HomePage</h1>
+        <user-list-component />
     </div>
 </template>
 
 <script>
+import UserListComponent from '../components/UserList.vue';
 
+export default {
+    name: 'HomePage',
+
+    components:{
+        UserListComponent
+    },
+
+    data(){
+        return{
+
+        }
+    },
+
+    methods:{
+
+    }
+}
 </script>
 
 <style scoped>

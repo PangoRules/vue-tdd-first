@@ -6,26 +6,26 @@ import UserPage from "../pages/UserPage";
 import ActivationPage from "../pages/ActivationPage";
 
 const routes =[
-    {
-        path: "/", 
-        component: HomePage
-    },
-    {
-        path: "/signup", 
-        component: SignUpPage
-    },
-    {
-        path: "/login", 
-        component: LoginPage
-    },
-    {
-        path: "/user/:id", 
-        component: UserPage
-    },
-    {
-        path: "/activate/:token", 
-        component: ActivationPage
-    },
+	{
+		path: "/", 
+		component: HomePage
+	},
+	{
+		path: "/signup", 
+		component: SignUpPage
+	},
+	{
+		path: "/login", 
+		component: LoginPage
+	},
+	{
+		path: "/user/:id", 
+		component: UserPage
+	},
+	{
+		path: "/activate/:token", 
+		component: ActivationPage
+	},
 ];
 
 const router = createRouter({routes, history: createWebHistory()});
