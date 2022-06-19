@@ -106,12 +106,12 @@ describe("Login Page", () =>{
 			})
 		});
 		it("sends email and password to backend after clicking the button", async () => {
-			const userFields = removeEmptyKeysInObject(new user(null, "test1@email.com", "test1"));
+			const userFields = new user(null, "test1@email.com", "test1");
 			await userEvent.click(submitButton);
 			expect(requestBody).toEqual(userFields);
 		});
 		//BUG: Apparently email is undefined on second call of the button click
-		it.skip("disables login button when there is an ongoing api call", async () => {
+		fit("disables login button when there is an ongoing api call", async () => {
 			await userEvent.click(submitButton);
 			await userEvent.click(submitButton);
 			expect(requestCounter).toBe(1);

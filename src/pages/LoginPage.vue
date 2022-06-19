@@ -23,7 +23,6 @@ import userModel from '../models/user.js';
 import SpinnerComponent from '../components/Spinner.vue';
 import InputComponent from '../components/Input.vue';
 import { userLogin } from '../api/userServices.js';
-import { removeEmptyKeysInObject } from '../util/utils.js';
 
 export default{
 	name: "LoginPage",
@@ -48,13 +47,12 @@ export default{
 			if(this.isLoading)
 				return;
 			this.isLoading = true;
-			const parsedUserModel = removeEmptyKeysInObject(this.userModel);
-			let response = await userLogin(parsedUserModel);
+			let response = await userLogin(this.userModel);
 			if(response.status==200){
 				this.successfulLogin = true;
 			}else{
 				// console.log(response);
-				this.errors = response.data.message;
+				this.errors = response;
 			}
 			this.isLoading = false;
 		}
