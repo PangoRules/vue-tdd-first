@@ -1,24 +1,30 @@
 <template>
-	<div class="card text-center">
-		<div class="card-header">
+	<card-component>
+		<template v-slot:header>
 			<img
 			src="../assets/profile.png"
 			alt="profile"
 			width="200"
 			class="rounded-circle shadow" />
-		</div>
-		<div class="card-body">
+		</template>
+		<template v-slot:body>
 			<h3>{{user.username}}</h3>
-		</div>
-	</div>
+		</template>
+	</card-component>
 </template>
 
 <script>
-	export default {
-		props:{
-			user: Object
-		}
+import CardComponent from './Card.vue';
+
+export default {
+	name: "ProfileCardComponent",
+
+	components:{ CardComponent },
+
+	props:{
+		user: Object
 	}
+}
 </script>
 
 <style lang="scss" scoped>

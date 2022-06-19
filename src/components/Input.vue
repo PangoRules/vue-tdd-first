@@ -8,14 +8,15 @@
 
 <script>
 export default {
-    emits: ["update:modelValue"],
-    props:{
-        label: String,
-        id: String,
-        help: String,
-        type: String,
-        modelValue: String
-    },
+	name: "InputComponent",
+	emits: ["update:modelValue"],
+	props:{
+		label: String,
+		id: String,
+		help: String,
+		type: String,
+		modelValue: String
+	},
 }
 </script>
 

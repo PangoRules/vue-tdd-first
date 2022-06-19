@@ -1,32 +1,36 @@
 <template>
-	<div data-testid="userlist-page" class="card">
-		<div class="card-header text-center">
-			<h3>{{$t("userListPage.header")}}</h3>
-		</div>
-		<ul class="list-group list-group-flush">
-			<li
-				class="list-group-item list-group-item-action"
-				v-for="(user) in page.content"
-				:key="user.id"
-				@click="$router.push(`/user/${user.id}`)">
-				<user-list-item-component :user="user"/>
-				</li>
-		</ul>
-		<div class="card-footer text-center">
-			<button
+	<div data-testid="userlist-page">
+		<card-component>
+			<template v-slot:header>
+				<h3>{{$t("userListPage.header")}}</h3>
+			</template>
+			<template v-slot:default>
+				<ul class="list-group list-group-flush">
+					<li
+						class="list-group-item list-group-item-action"
+						v-for="(user) in page.content"
+						:key="user.id"
+						@click="$router.push(`/user/${user.id}`)">
+						<user-list-item-component :user="user"/>
+						</li>
+				</ul>
+			</template>
+			<template v-slot:footer>
+				<button
 				@click="loadPrevious()"
 				:disabled="disablePrevious"
 				v-show="!isLoading"
 				class="btn btn-outline-secondary btn-sm">
 				{{$t("userListPage.previousPage")}}</button>
-			<button
-				@click="loadNext()"
-				:disabled="disableNext"
-				v-show="!isLoading"
-				class="btn btn-outline-secondary btn-sm">
-				{{$t("userListPage.nextPage")}}</button>
-				<spinner-component size="medium" v-if="isLoading"/>
-		</div>
+				<button
+					@click="loadNext()"
+					:disabled="disableNext"
+					v-show="!isLoading"
+					class="btn btn-outline-secondary btn-sm">
+					{{$t("userListPage.nextPage")}}</button>
+					<spinner-component size="medium" v-if="isLoading"/>
+			</template>
+		</card-component>
 	</div>
 </template>
 
@@ -34,12 +38,13 @@
 import { getUsers } from '../api/userServices.js';
 import UserListItemComponent from '../components/UserListItem.vue';
 import SpinnerComponent from '../components/Spinner.vue';
+import CardComponent from '../components/Card.vue';
 
 export default{
 	name: 'UserList',
 
 	components:{
-		UserListItemComponent, SpinnerComponent
+		UserListItemComponent, SpinnerComponent, CardComponent
 	},
 
 	data(){
