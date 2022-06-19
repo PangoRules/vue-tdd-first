@@ -11,10 +11,7 @@
                 <input-component :label="$t('password')" id="password" :help="errors.password" v-model="userModel.password" type="password"/>
                 <input-component :label="$t('passwordRepeat')" id="password-repeat" :help="passwordMismatch ? $t('passwordMismatchValidation') : ''" v-model="repeatPassword" type="password"/>
                 <div class="text-center">
-                    <button :disabled="disableButton" type="submit" class="btn btn-primary">
-                        <spinner-component v-if="isLoading"/>
-                        {{$t("signUp")}}
-                    </button>
+										<button-with-progress-component :isDisabled="disableButton" :isLoading="isLoading">{{$t("signUp")}}</button-with-progress-component>
                 </div>
             </div>
         </form>
@@ -25,13 +22,13 @@
 import userModel from '../models/user.js';
 import { createNewUser } from '../api/userServices.js';
 import InputComponent from '../components/Input.vue';
-import SpinnerComponent from '../components/Spinner.vue';
+import ButtonWithProgressComponent from '../components/ButtonWithProgress.vue';
 
 export default {
     name: 'SignUpPage',
 
     components:{
-        InputComponent, SpinnerComponent
+        InputComponent, ButtonWithProgressComponent
     },
 
     data(){

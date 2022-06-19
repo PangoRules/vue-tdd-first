@@ -9,10 +9,7 @@
 					<input-component :label="$t('email')" id="email" v-model="userModel.email" type="email"/>
 					<input-component :label="$t('password')" id="password" v-model="userModel.password" type="password"/>
 					<div class="text-center">
-						<button :disabled="disableButton" type="submit" class="btn btn-primary">
-							<spinner-component v-if="isLoading"/>
-							{{$t("login")}}
-						</button>
+						<button-with-progress-component :isDisabled="disableButton" :isLoading="isLoading">{{$t("login")}}</button-with-progress-component>
 					</div>
 				</div>
 			</form>
@@ -21,14 +18,14 @@
 
 <script>
 import userModel from '../models/user.js';
-import SpinnerComponent from '../components/Spinner.vue';
+import ButtonWithProgressComponent from '../components/ButtonWithProgress.vue';
 import InputComponent from '../components/Input.vue';
 import { userLogin } from '../api/userServices.js';
 
 export default{
 	name: "LoginPage",
 
-	components:{ SpinnerComponent, InputComponent },
+	components:{ ButtonWithProgressComponent, InputComponent },
 
 	data(){
 		return{
@@ -38,8 +35,6 @@ export default{
 			isLoading: false,
 			/**@type {<Object>} Validation errors*/
 			errorMessage: "",
-			/**@type {Boolean} Indicates if the login was successful */
-			successfulLogin: false,
 		}
 	},
 
@@ -50,7 +45,7 @@ export default{
 			this.isLoading = true;
 			let response = await userLogin(this.userModel);
 			if(response.status==200){
-				this.successfulLogin = true;
+				this.$router.push("/");
 			}else{
 				this.errorMessage = response.data.message;
 			}
