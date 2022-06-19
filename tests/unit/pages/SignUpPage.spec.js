@@ -272,7 +272,6 @@ describe("Sign Up Page", () => {
             const validation = screen.queryByText(es.passwordMismatchValidation);
             expect(validation).toBeInTheDocument();
         });
-        //BUG: if spanish goes first, it works and no other test are being executed it works, else it fails on spanish one.
         it.each`
             lang        | title
             ${'en'}     | ${'English'}

@@ -8,7 +8,7 @@ import apiUrls from "../util/apiUrls.js";
 
 /**
  * Function en charge of calling the api to create a new user
- * @param {<Object>(user)} userModel - Model with the data of the user to add.
+ * @param {<Object>} userModel - Model with the data of the user to add.
  * @returns Response object with the result of the call
  */
 async function createNewUser(userModel){
@@ -67,4 +67,18 @@ async function getUser(id){
 	}
 }
 
-export{ createNewUser, activateUser, getUsers, getUser };
+/**
+ * Function in charge of loggin in an user
+ * @param {<Object>} userModel - Model with the data of the user to login. 
+ * @returns Response object with data of the logged in user
+ */
+async function userLogin(userModel){
+	try{
+		let response = await apis.serverBaseApi().post(apiUrls.USER_LOGIN,userModel);
+		return response;
+	}catch(error){
+		return error.response;
+	}
+}
+
+export{ createNewUser, activateUser, getUsers, getUser, userLogin };

@@ -4,7 +4,7 @@
 			<spinner-component size="medium"/>
 		</div>
 		<profile-card-component :user="user" v-if="!isLoading && errorMessage.length===0"/>
-		<div class="alert alert-danger text-center">
+		<div class="alert alert-danger text-center" v-show="errorMessage.length!==0">
 			<h3>{{errorMessage}}</h3>
 		</div>
 	</div>

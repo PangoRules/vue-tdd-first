@@ -130,3 +130,19 @@ describe("Routing", () => {
 			expect(page).toBeInTheDocument();
 	});
 });
+
+describe("Login", () =>{
+	it("redirects to homepage after successful login", async () => {
+		server.use(
+			rest.post(apiUrls.USER_LOGIN, (req, res, context) => {
+				return rest(context.status(200), context.json({username: "user5"}));
+			})
+		);
+		await setup("/login");
+		await userEvent.type(screen.queryByLabelText("E-mail"), "user5@mail.com");
+		await userEvent.type(screen.queryByLabelText("Password"), "P4ssword");
+		await userEvent.click(screen.queryByRole("button", {name: "Login"}));
+		const page = await screen.findByTestId("home-page");
+		expect(page).toBeInTheDocument();
+	});
+});

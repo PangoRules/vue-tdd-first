@@ -1,22 +1,21 @@
 <template>
     <div class="col-lg-6 offset-lg-3 coo-md-8 offset-md-2" data-testid="signup-page">
         <div class="alert alert-success mt-5" v-if="successfulSignup">{{$t("accountActivationNotification")}}</div>
-        <form v-on:submit.prevent="submitForm" class="card" data-testid="form-sign-up" v-if="!successfulSignup">
-            <div class="card-header">
-                <h1 class="text-center">{{$t("signUp")}}</h1>
-            </div>
-            <div class="card-body">
-                <input-component :label="$t('username')" id="username" :help="errors.username" v-model="userModel.username" type="text"/>
-                <input-component :label="$t('email')" id="email" :help="errors.email" v-model="userModel.email" type="email"/>
-                <input-component :label="$t('password')" id="password" :help="errors.password" v-model="userModel.password" type="password"/>
-                <input-component :label="$t('passwordRepeat')" id="password-repeat" :help="passwordMismatch ? $t('passwordMismatchValidation') : ''" v-model="repeatPassword" type="password"/>
-                <div class="text-center">
-                    <button :disabled="disableButton" type="submit" class="btn btn-primary">
-                        <spinner-component v-if="isLoading"/>
-                        {{$t("signUp")}}
-                    </button>
-                </div>
-            </div>
+        <form v-on:submit.prevent="submitForm" data-testid="form-sign-up" v-if="!successfulSignup">
+					<card-component>
+						<template v-slot:header>
+							<h1>{{$t("signUp")}}</h1>
+						</template>
+						<template v-slot:body>
+							<input-component :label="$t('username')" id="username" :help="errors.username" v-model="userModel.username" type="text"/>
+							<input-component :label="$t('email')" id="email" :help="errors.email" v-model="userModel.email" type="email"/>
+							<input-component :label="$t('password')" id="password" :help="errors.password" v-model="userModel.password" type="password"/>
+							<input-component :label="$t('passwordRepeat')" id="password-repeat" :help="passwordMismatch ? $t('passwordMismatchValidation') : ''" v-model="repeatPassword" type="password"/>
+							<div class="text-center">
+								<button-with-progress-component :isDisabled="disableButton" :isLoading="isLoading">{{$t("signUp")}}</button-with-progress-component>
+							</div>
+						</template>
+					</card-component>
         </form>
     </div>
 </template>
@@ -25,13 +24,14 @@
 import userModel from '../models/user.js';
 import { createNewUser } from '../api/userServices.js';
 import InputComponent from '../components/Input.vue';
-import SpinnerComponent from '../components/Spinner.vue';
+import ButtonWithProgressComponent from '../components/ButtonWithProgress.vue';
+import CardComponent from '../components/Card.vue';
 
 export default {
     name: 'SignUpPage',
 
     components:{
-        InputComponent, SpinnerComponent
+        InputComponent, ButtonWithProgressComponent, CardComponent
     },
 
     data(){
