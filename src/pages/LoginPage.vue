@@ -1,12 +1,13 @@
 <template>
     <div class="col-lg-6 offset-lg-3 coo-md-8 offset-md-2" data-testid="login-page">
+			<div class="alert alert-danger" v-if="errorMessage.length!==0">{{errorMessage}}</div>
 			<form v-on:submit.prevent="submitForm" class="card" data-testid="form-login">
 				<div class="card-header">
 					<h1 class="text-center">{{$t("login")}}</h1>
 				</div>
 				<div class="card-body">
-					<input-component :label="$t('email')" id="email" :help="errors.email" v-model="userModel.email" type="email"/>
-					<input-component :label="$t('password')" id="password" :help="errors.password" v-model="userModel.password" type="password"/>
+					<input-component :label="$t('email')" id="email" v-model="userModel.email" type="email"/>
+					<input-component :label="$t('password')" id="password" v-model="userModel.password" type="password"/>
 					<div class="text-center">
 						<button :disabled="disableButton" type="submit" class="btn btn-primary">
 							<spinner-component v-if="isLoading"/>
@@ -36,7 +37,7 @@ export default{
 			/**@type {Boolean} Boolean value to detect if the page is waiting for a request */
 			isLoading: false,
 			/**@type {<Object>} Validation errors*/
-			errors: {},
+			errorMessage: "",
 			/**@type {Boolean} Indicates if the login was successful */
 			successfulLogin: false,
 		}
@@ -51,8 +52,7 @@ export default{
 			if(response.status==200){
 				this.successfulLogin = true;
 			}else{
-				// console.log(response);
-				this.errors = response;
+				this.errorMessage = response.data.message;
 			}
 			this.isLoading = false;
 		}
@@ -61,6 +61,24 @@ export default{
 	computed:{
 		disableButton(){
 			return (this.userModel.password.length === 0 || this.userModel.email.length === 0 || this.isLoading);
+		},
+
+		email(){
+			return this.userModel.email;
+		},
+
+		password(){
+			return this.userModel.password;
+		},
+	},
+
+	watch:{
+		email(){
+			this.errorMessage = "";
+		},
+
+		password(){
+			this.errorMessage = "";
 		},
 	}
 }
