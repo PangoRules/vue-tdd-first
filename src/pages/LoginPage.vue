@@ -1,11 +1,71 @@
 <template>
-    <div data-testid="login-page">
-        <h1>LoginPage</h1>
+    <div class="col-lg-6 offset-lg-3 coo-md-8 offset-md-2" data-testid="login-page">
+			<form v-on:submit.prevent="submitForm" class="card" data-testid="form-login">
+				<div class="card-header">
+					<h1 class="text-center">{{$t("login")}}</h1>
+				</div>
+				<div class="card-body">
+					<input-component :label="$t('email')" id="email" :help="errors.email" v-model="userModel.email" type="email"/>
+					<input-component :label="$t('password')" id="password" :help="errors.password" v-model="userModel.password" type="password"/>
+					<div class="text-center">
+						<button :disabled="disableButton" type="submit" class="btn btn-primary">
+							<spinner-component v-if="isLoading"/>
+							{{$t("login")}}
+						</button>
+					</div>
+				</div>
+			</form>
     </div>
 </template>
 
 <script>
+import userModel from '../models/user.js';
+import SpinnerComponent from '../components/Spinner.vue';
+import InputComponent from '../components/Input.vue';
+import { userLogin } from '../api/userServices.js';
+import { removeEmptyKeysInObject } from '../util/utils.js';
 
+export default{
+	name: "LoginPage",
+
+	components:{ SpinnerComponent, InputComponent },
+
+	data(){
+		return{
+			/**@type {Object} Data model for storing new user */
+			userModel: new userModel(),
+			/**@type {Boolean} Boolean value to detect if the page is waiting for a request */
+			isLoading: false,
+			/**@type {<Object>} Validation errors*/
+			errors: {},
+			/**@type {Boolean} Indicates if the login was successful */
+			successfulLogin: false,
+		}
+	},
+
+	methods:{
+		async submitForm(){
+			if(this.isLoading)
+				return;
+			this.isLoading = true;
+			const parsedUserModel = removeEmptyKeysInObject(this.userModel);
+			let response = await userLogin(parsedUserModel);
+			if(response.status==200){
+				this.successfulLogin = true;
+			}else{
+				// console.log(response);
+				this.errors = response.data.message;
+			}
+			this.isLoading = false;
+		}
+	},
+
+	computed:{
+		disableButton(){
+			return (this.userModel.password.length === 0 || this.userModel.email.length === 0 || this.isLoading);
+		},
+	}
+}
 </script>
 
 <style scoped>

@@ -1,5 +1,5 @@
 <template>
-	<div data-testid="activation-page">
+	<div class="col-lg-6 offset-lg-3 coo-md-8 offset-md-2" data-testid="activation-page">
         <spinner-component v-if="isLoading" size="normal"/>
 		<div class="alert alert-success mt-3" v-if="success">Account is activated</div>
 		<div class="alert alert-danger mt-3" v-if="fail">Activation failure</div>
