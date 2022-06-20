@@ -7,6 +7,7 @@ import { setupServer } from "msw/node";
 import { rest } from "msw";
 import apiUrls from "../../src/util/apiUrls.js";
 import store, { resetAuthState } from "../../src/state/store.js";
+import storage from "../../src/state/storage";
 
 const server = setupServer(
 	rest.post(`${apiUrls.USER_ACTIVATE}:token`, (req, res, ctx) => {
@@ -144,7 +145,7 @@ fdescribe("Login", () =>{
 	};
 
 	afterEach(() =>{ 
-		localStorage.clear()
+		storage.clear()
 		resetAuthState();
 	});
 
@@ -180,11 +181,11 @@ fdescribe("Login", () =>{
 	it("stores logged in state in local storage", async () =>{
 		await setupLoggedIn();
 		await screen.findByTestId("home-page");
-		const state = JSON.parse(localStorage.getItem("auth"));
+		const state = storage.getItem("auth");
 		expect(state.isLoggedIn).toBeTruthy();
 	});
 	it("displays layout of logged in state", async () =>{
-		localStorage.setItem("auth", JSON.stringify({ isLoggedIn: true }));
+		storage.setItem("auth", { isLoggedIn: true });
 		resetAuthState();
 		await setup("/");
 		const profileLink = screen.queryByRole("link", {name: "Profile"});
