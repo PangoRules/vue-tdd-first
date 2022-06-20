@@ -1,5 +1,5 @@
 <template>
-	<button :disabled="isDisabled" :type="type" :class="errorFlag ? 'btn btn-danger': 'btn btn-primary'" @click="onClick">
+	<button :disabled="isDisabled" :type="type" class="btn btn-primary" @click="onClick">
 		<spinner-component v-if="isLoading"/>
 		<slot>Button</slot>
 	</button>
@@ -41,12 +41,9 @@ export default {
 
 	methods:{
 		onClick(){
-			this.errorFlag = false;
-			if(this.type==='submit'){
-				this.errorFlag = true;
-				return;
+			if(this.type!=='submit'){
+				this.$emit('custom-button-click');
 			}
-			this.$emit('custom-button-click');
 		}
 	}
 }

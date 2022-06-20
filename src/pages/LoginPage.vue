@@ -49,6 +49,11 @@ export default{
 			let response = await userLogin(this.userModel);
 			if(response.status==200){
 				this.$router.push("/");
+				const data ={
+					...response.data,
+					header: `Bearer ${response.data.token}`
+				}
+				this.$store.commit('loginSuccess', data);
 			}else{
 				this.errorMessage = response.data.message;
 			}

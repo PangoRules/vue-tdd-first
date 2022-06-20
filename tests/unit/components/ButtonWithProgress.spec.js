@@ -39,9 +39,3 @@ it("displays button disabled and shows loading spinner", () => {
 	expect(button).toBeDisabled();
 	expect(spinner).toBeInTheDocument();
 });
-
-it("button has danger class if trying to emit while being submit type", async () => {
-	setup(false);
-	await userEvent.click(button);
-	expect(button).toHaveClass('btn-danger');
-});

@@ -1,5 +1,5 @@
 <template>
-	<div data-testid="user-page">
+	<div class="col-lg-6 offset-lg-3 coo-md-8 offset-md-2" data-testid="user-page">
 		<div class="alert alert-secondary text-center" v-if="isLoading">
 			<spinner-component size="medium"/>
 		</div>

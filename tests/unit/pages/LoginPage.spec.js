@@ -1,4 +1,4 @@
-import { screen, render, waitFor, cleanup } from "@testing-library/vue";
+import { screen, render, waitFor, cleanup, waitForElementToBeRemoved } from "@testing-library/vue";
 import userEvent from "@testing-library/user-event";
 import { setupServer } from "msw/node";
 import { rest } from "msw";
@@ -10,6 +10,8 @@ import i18n from "../../../src/locales/i18n.js";
 import en from "../../../src/locales/en/en.json";
 import es from "../../../src/locales/es/es.json";
 import LanguageSelector from "../../../src/components/LanguageSelector.vue";
+import store from "../../../src/state/store.js";
+import storage from "../../../src/state/storage.js";
 
 let requestBody, acceptLanguageHeader, requestCounter = 0;
 const server = setupServer(
@@ -17,15 +19,23 @@ const server = setupServer(
 		requestBody = req.body;
 		requestCounter += 1;
 		acceptLanguageHeader = req.headers.get("Accept-Language");
-		return res(context.status(401),context.json({message: "Incorrect credentials"}));
+		return res(
+			context.status(401),
+			context.json({
+				message: "Incorrect credentials"
+			})
+		);
 	}),
-	// rest.post(apiUrls.USER_LOGIN, (req, res, context) => {
-	// 	requestBody = req.body;
-	// 	requestCounter += 1;
-	// 	acceptLanguageHeader = req.headers.get("Accept-Language");
-	// 	return res(context.status(200));
-	// })
 );
+
+const loginSuccessServerSetup = rest.post(apiUrls.USER_LOGIN, (req, res, context) => {
+	return res(
+		context.status(200), 
+		context.json({
+			id: 5, username: "user5", image: null, token: "abcdefgh"
+		})
+	);
+});
 
 let submitButton, passwordInput, emailInput, spanishLanguage, englishLanguage;
 async function setup(){
@@ -39,7 +49,16 @@ async function setup(){
 		<LanguageSelector />
 		`,
 	};
-	render(app,{ global:{ plugins: [i18n] } });
+	render(app, { 
+		global: { 
+			mocks: {
+				$router:{
+					push: () => {},
+				},
+			},
+			plugins: [i18n, store] 
+		} 
+	});
 
 	emailInput = screen.queryByLabelText(en.email);
 	passwordInput = screen.queryByLabelText(en.password);
@@ -133,6 +152,25 @@ describe("Login Page", () =>{
 			expect(errorMessage).not.toBeInTheDocument();
 
 		});
+		it("stores id, username and image in storage", async () => {
+			server.use(loginSuccessServerSetup);
+			await userEvent.click(submitButton);
+			const spinner = screen.queryByRole("status");
+			await waitForElementToBeRemoved(spinner);
+			const storedState = storage.getItem("auth");
+			const keys = Object.keys(storedState); //['id', 'username', 'image', 'isLoggedIn']
+			expect(keys.includes("id")).toBeTruthy();
+			expect(keys.includes("username")).toBeTruthy();
+			expect(keys.includes("image")).toBeTruthy();
+		})
+		it("stores authorization header value in storage", async () => {
+			server.use(loginSuccessServerSetup);
+			await userEvent.click(submitButton);
+			const spinner = screen.queryByRole("status");
+			await waitForElementToBeRemoved(spinner);
+			const storedState = storage.getItem("auth");
+			expect(storedState.header).toBe("Bearer abcdefgh");
+		})
 	});
 
 	describe("Internationalization", () => {
