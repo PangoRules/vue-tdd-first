@@ -6,16 +6,14 @@ const store = createStore({
 		return JSON.parse(localStorage.getItem("auth"));
 	},
 	mutations:{
-		loginSuccess(state, id){
+		loginSuccess(state, userData){
 			state.isLoggedIn=true;
-			state.id = id;
+			assignStateData(userData, state);
 		},
 		reset(state, initialState){
 			state.isLoggedIn = false;
 			delete state.id;
-			for(let key in initialState){
-				state[key] = initialState[key];
-			}
+			assignStateData(initialState, state);
 		}
 	},
 });
@@ -29,3 +27,9 @@ export const resetAuthState = () =>{
 }
 
 export default store;
+
+function assignStateData(userData, state) {
+	for (let key in userData) {
+		state[key] = userData[key];
+	}
+}
