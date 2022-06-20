@@ -6,7 +6,7 @@ import router from "../../src/routes/router.js";
 import { setupServer } from "msw/node";
 import { rest } from "msw";
 import apiUrls from "../../src/util/apiUrls.js";
-import store from "../../src/state/store.js";
+import store, { resetAuthState } from "../../src/state/store.js";
 
 const server = setupServer(
 	rest.post(`${apiUrls.USER_ACTIVATE}:token`, (req, res, ctx) => {
@@ -141,7 +141,13 @@ fdescribe("Login", () =>{
 		await userEvent.type(screen.queryByLabelText("E-mail"), "user5@mail.com");
 		await userEvent.type(screen.queryByLabelText("Password"), "P4ssword");
 		await userEvent.click(screen.queryByRole("button", {name: "Login"}));
-	}
+	};
+
+	afterEach(() =>{ 
+		localStorage.clear()
+		resetAuthState();
+	});
+
 	it("redirects to homepage after successful login", async () => {
 		setupLoggedIn();
 		const page = await screen.findByTestId("home-page");
@@ -171,5 +177,17 @@ fdescribe("Login", () =>{
 		const header = await screen.findByRole("heading", {name: "user5"})
 		expect(header).toBeInTheDocument();
 	});
-
+	it("stores logged in state in local storage", async () =>{
+		await setupLoggedIn();
+		await screen.findByTestId("home-page");
+		const state = JSON.parse(localStorage.getItem("auth"));
+		expect(state.isLoggedIn).toBeTruthy();
+	});
+	it("displays layout of logged in state", async () =>{
+		localStorage.setItem("auth", JSON.stringify({ isLoggedIn: true }));
+		resetAuthState();
+		await setup("/");
+		const profileLink = screen.queryByRole("link", {name: "Profile"});
+		expect(profileLink).toBeInTheDocument();
+	})
 });
