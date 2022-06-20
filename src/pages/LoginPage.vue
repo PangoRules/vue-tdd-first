@@ -49,6 +49,7 @@ export default{
 			let response = await userLogin(this.userModel);
 			if(response.status==200){
 				this.$router.push("/");
+				this.$store.commit('loginSuccess', response.data.id);
 			}else{
 				this.errorMessage = response.data.message;
 			}
