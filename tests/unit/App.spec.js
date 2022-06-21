@@ -36,7 +36,7 @@ const server = setupServer(
 		}));
 	}),
 	rest.post(apiUrls.USER_LOGIN, (req, res, context) => {
-		return rest(context.status(200), context.json({ id: 5, username: "user5", email: "user5@mail.com"}));
+		return res(context.status(200), context.json({ id: 5, username: "user5", email: "user5@mail.com"}));
 	})
 );
 
@@ -136,7 +136,7 @@ describe("Routing", () => {
 	});
 });
 
-fdescribe("Login", () =>{
+describe("Login", () =>{
 	async function setupLoggedIn(){
 		await setup("/login");
 		await userEvent.type(screen.queryByLabelText("E-mail"), "user5@mail.com");
@@ -168,8 +168,7 @@ fdescribe("Login", () =>{
 		const profileLink = screen.queryByRole("link", {name: "Profile"});
 		expect(profileLink).toBeInTheDocument();
 	});
-	//FIXME: Can't get the header since it returns userNaN in the view
-	it.skip("displays user page for logged in user when user clicks profile link", async () => {
+	it("displays user page for logged in user when user clicks profile link", async () => {
 		setupLoggedIn();
 		await screen.findByTestId("home-page");
 		const profileLink = screen.queryByRole("link", {name: "Profile"});

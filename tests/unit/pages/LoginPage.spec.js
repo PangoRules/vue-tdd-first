@@ -23,7 +23,8 @@ const server = setupServer(
 			context.status(401),
 			context.json({
 				message: "Incorrect credentials"
-			})
+			}),
+			context.delay(100)
 		);
 	}),
 );
@@ -129,8 +130,7 @@ describe("Login Page", () =>{
 			await userEvent.click(submitButton);
 			expect(requestBody).toEqual(userFields);
 		});
-		//FIXME: Bug expecting 1 receiving 2
-		it.skip("disables login button when there is an ongoing api call", async () => {
+		it("disables login button when there is an ongoing api call", async () => {
 			await userEvent.click(submitButton);
 			await userEvent.click(submitButton);
 			expect(requestCounter).toBe(1);
@@ -174,6 +174,10 @@ describe("Login Page", () =>{
 	});
 
 	describe("Internationalization", () => {
+		beforeEach(async () => {
+			cleanup()
+			await setupFilled();
+		});
 		it("initially displays all text in english", () =>{
 			expect(screen.queryByRole("heading", {name: en.login})).toBeInTheDocument();
 			expect(screen.queryByRole("button", {name: en.login})).toBeInTheDocument();
@@ -196,14 +200,9 @@ describe("Login Page", () =>{
 				expect(screen.queryByLabelText(jsonSelected.email)).toBeInTheDocument();
 				expect(screen.queryByLabelText(jsonSelected.password)).toBeInTheDocument();
 		});
-		//FIXME: Not getting correct language header from request in test (works on ui)
-		it.skip("sends accept-language header as es in login request", async () => {
-			console.log(i18n.global.locale);
+		it("sends accept-language header as es in login request", async () => {
 			await userEvent.click(spanishLanguage);
-			console.log(acceptLanguageHeader);
 			await userEvent.click(submitButton);
-			console.log(acceptLanguageHeader);
-			console.log(i18n.global.locale);
 			expect(true).toBe(true);
 			expect(acceptLanguageHeader).toBe('es');
 		});
